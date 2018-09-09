@@ -10,6 +10,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     ImageView m_LiveView = null;
     Button m_btn_start = null;
     Button m_btn_stop = null;
+    Camera camera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,21 +43,49 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+        m_btn_start.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                camera.addCallbackBuffer(new byte[640*480*2]);
+                camera.setPreviewCallbackWithBuffer(new Camera.PreviewCallback() {
+                    @Override
+                    public void onPreviewFrame(byte[] bytes, Camera camera) {
+
+                        int[] rgb =  decodeYUV420SPndk(bytes,640,480);
+                        Bitmap bmp = Bitmap.createBitmap( rgb,480, 640,Bitmap.Config.ARGB_8888);
+                        m_LiveView.setImageBitmap(bmp);
+                        camera.addCallbackBuffer(bytes);
+                    }
+                });
+                camera.startPreview();;
+            }
+        });
+        m_btn_stop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                camera.stopPreview();
+            }
+        });
     }
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
      * which is packaged with this application.
      */
-    public native String stringFromJNI();
     public native int[] decodeYUV420SPndk(byte[] image , int width, int height);
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     /**
      *
      */
     public void openCamera(){
-        Camera camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
+        camera = Camera.open(Camera.CameraInfo.CAMERA_FACING_BACK);
         camera.addCallbackBuffer(new byte[640*480*2]);
         Camera.Parameters parameters = camera.getParameters();
         parameters.setPreviewSize(640,480);
@@ -71,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
                 camera.addCallbackBuffer(bytes);
             }
         });
-        camera.startPreview();
     }
 
     @Override

@@ -1,22 +1,6 @@
 #include <jni.h>
 #include <string>
 
-extern "C" JNIEXPORT jstring
-
-JNICALL
-Java_test_example_com_ConnectNdkCamera_MainActivity_stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
-
-    int test[1234567];
-    for(int i = 0 ; i < 1234567 ; i++)
-    {
-        test[i] = 0;
-    }
-    return env->NewStringUTF(hello.c_str());
-}
-
 
 extern "C"
 JNIEXPORT jintArray JNICALL
