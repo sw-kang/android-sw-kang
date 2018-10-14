@@ -3,13 +3,11 @@ package test.example.com.ConnectNdkCamera;
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -97,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
                 int[] rgb =  decodeYUV420SPndk(bytes,640,480);
                 Bitmap bmp = Bitmap.createBitmap( rgb,480, 640,Bitmap.Config.ARGB_8888);
+
                 m_LiveView.setImageBitmap(bmp);
                 camera.addCallbackBuffer(bytes);
             }
@@ -110,4 +109,4 @@ public class MainActivity extends AppCompatActivity {
             openCamera();
         }
     }
-}
+          }
